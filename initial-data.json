@@ -1,0 +1,66 @@
+[
+    {
+        "model": "pessoas.pessoa",
+        "pk": 1,
+        "fields": {
+            "nome": "Thiago Marçal",
+            "email": "tma@cdtn.br"
+        }
+    },
+    {
+        "model": "pessoas.pessoa",
+        "pk": 2,
+        "fields": {
+            "nome": "Zina",
+            "email": "zina@gmail.com"
+        }
+    },
+    {
+        "model": "receitas.receita",
+        "pk": 1,
+        "fields": {
+            "pessoa": 1,
+            "nome_receita": "Lasanha",
+            "ingredientes": "Todos",
+            "modo_preparo": "Rápido",
+            "tempo_preparo": 0,
+            "rendimento": "10 porções",
+            "categoria": "Receita",
+            "date_receita": "2022-05-01T03:00:00Z",
+            "foto_receita": "",
+            "publicada": false
+        }
+    },
+    {
+        "model": "receitas.receita",
+        "pk": 2,
+        "fields": {
+            "pessoa": 2,
+            "nome_receita": "Sopa de legumes",
+            "ingredientes": "Todos",
+            "modo_preparo": "Rápido",
+            "tempo_preparo": 0,
+            "rendimento": "10 porções",
+            "categoria": "Receita",
+            "date_receita": "2022-05-01T03:00:00Z",
+            "foto_receita": "",
+            "publicada": true
+        }
+    },
+    {
+        "model": "receitas.receita",
+        "pk": 3,
+        "fields": {
+            "pessoa": 1,
+            "nome_receita": "Sorvete",
+            "ingredientes": "Todos",
+            "modo_preparo": "Rápido",
+            "tempo_preparo": 0,
+            "rendimento": "10 porções",
+            "categoria": "Sobremesa",
+            "date_receita": "2022-05-01T03:00:00Z",
+            "foto_receita": "fotos/29/05/2022/economize-fazendo-sorvete1.jpg",
+            "publicada": true
+        }
+    }
+]
