@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render
 
 from django.contrib.auth.models import User
+from django.contrib import auth
 
 def cadastro(request):
     if request.method == 'POST':
@@ -20,7 +21,7 @@ def cadastro(request):
         if User.objects.filter(email=email).exists():
             print('Usuário já cadastrado.')
             return redirect('cadastro')
-        user = User.objects.create(username=nome, email=email, password=password)
+        user = User.objects.create_user(username=nome, email=email, password=password)
         user.save()
         print('Usuário cadastrado com sucesso.')
         return redirect('login')
@@ -34,8 +35,17 @@ def login(request):
         if email == '' or senha == '':
             print('Os campos e-mail e senha não podem ficar em branco.')
             return redirect('login')
-        print(email, senha)
-        return redirect('dashboard')
+        if User.objects.filter(email=email).exists():
+            nome = User.objects.filter(email=email).values_list('username', flat=True).get()
+            # O método values_list retorna um Queryset com as colunas indicadas como parâmetro.
+            # Flat significa retorno de um único objeto por linha, ao invés de uma lista
+            # de tuplas que contenham um elemento. Veja:
+            # https://docs.djangoproject.com/en/4.0/ref/models/querysets/#values-list
+            user = auth.authenticate(request, username=nome, password=senha)
+            if user is not None:
+                auth.login(request, user)
+                print('Login realizado com sucesso.')
+                return redirect('dashboard')
     return render(request, 'usuarios/login.html')
 
 def logout(request):
