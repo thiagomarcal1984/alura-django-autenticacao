@@ -82,8 +82,8 @@ DATABASES = {
         'NAME': 'alura_receita',
         'USER': 'postgres',
         'PASSWORD': '123456',
-        'HOST': 'db', # Se for rodar no Docker Compose.
-        # 'HOST': 'localhost', # Se for rodar localmente.
+        # 'HOST': 'db', # Se for rodar no Docker Compose.
+        'HOST': 'localhost', # Se for rodar localmente.
     }
 }
 
@@ -133,3 +133,9 @@ STATICFILES_DIRS = [
 # Media
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+
+from django.contrib.messages import constants as messages
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+    messages.SUCCESS: 'success',
+}

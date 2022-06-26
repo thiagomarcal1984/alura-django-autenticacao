@@ -2,7 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 from django.contrib import auth
 from django.contrib.auth.models import User
-from django.contrib import auth
+from django.contrib import messages
 
 from receitas.models import Receita
 
@@ -13,20 +13,20 @@ def cadastro(request):
         password = request.POST['password']
         password2 = request.POST['password2']
         if not nome.strip(): # O método strip remove os espaços em branco do início e do fim da String.
-            print('O campo nome não pode ficar em branco.')
+            messages.error(request, 'O campo nome não pode ficar em branco.')
             return redirect('cadastro')
         if not email.strip(): # O método strip remove os espaços em branco do início e do fim da String.
-            print('O campo e-mail não pode ficar em branco.')
+            messages.error(request, 'O campo e-mail não pode ficar em branco.')
             return redirect('cadastro')
         if password != password2:
-            print('As senhas não são iguais.')
+            messages.error(request, 'As senhas não são iguais.')
             return redirect('cadastro')
         if User.objects.filter(email=email).exists():
-            print('Usuário já cadastrado.')
+            messages.error(request, 'Usuário já cadastrado.')
             return redirect('cadastro')
         user = User.objects.create_user(username=nome, email=email, password=password)
         user.save()
-        print('Usuário cadastrado com sucesso.')
+        messages.success(request, 'Usuário cadastrado com sucesso.')
         return redirect('login')
     else:
         return render(request, 'usuarios/cadastro.html')
@@ -36,7 +36,7 @@ def login(request):
         email = request.POST['email']
         senha = request.POST['senha']
         if email == '' or senha == '':
-            print('Os campos e-mail e senha não podem ficar em branco.')
+            messages.error(request, 'Os campos e-mail e senha não podem ficar em branco.')
             return redirect('login')
         if User.objects.filter(email=email).exists():
             nome = User.objects.filter(email=email).values_list('username', flat=True).get()
@@ -47,7 +47,7 @@ def login(request):
             user = auth.authenticate(request, username=nome, password=senha)
             if user is not None:
                 auth.login(request, user)
-                print('Login realizado com sucesso.')
+                messages.success(request, 'Login realizado com sucesso.')
                 return redirect('dashboard')
     return render(request, 'usuarios/login.html')
 
