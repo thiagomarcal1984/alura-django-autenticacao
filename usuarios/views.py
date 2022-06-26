@@ -12,16 +12,16 @@ def cadastro(request):
         email = request.POST['email']
         password = request.POST['password']
         password2 = request.POST['password2']
-        if not nome.strip(): # O método strip remove os espaços em branco do início e do fim da String.
+        if not campo_vazio(nome):
             messages.error(request, 'O campo nome não pode ficar em branco.')
             return redirect('cadastro')
-        if not email.strip(): # O método strip remove os espaços em branco do início e do fim da String.
+        if not campo_vazio(email):
             messages.error(request, 'O campo e-mail não pode ficar em branco.')
             return redirect('cadastro')
-        if password != password2:
+        if senhas_nao_sao_iguais(password, password2):
             messages.error(request, 'As senhas não são iguais.')
             return redirect('cadastro')
-        if User.objects.filter(email=email).exists():
+        if User.objects.filter(email=email).exists() or User.objects.filter(username=nome).exists():
             messages.error(request, 'Usuário já cadastrado.')
             return redirect('cadastro')
         user = User.objects.create_user(username=nome, email=email, password=password)
@@ -89,3 +89,9 @@ def cria_receita(request):
         receita.save()
         return redirect('dashboard')
     return render(request, 'usuarios/cria_receita.html')
+
+def campo_vazio(campo):
+    return campo.strip() # O método strip remove os espaços em branco do início e do fim da String.
+
+def senhas_nao_sao_iguais(password, password2):
+    return password != password2
