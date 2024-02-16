@@ -52,3 +52,40 @@ urlpatterns = [
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 ```
 Na próxima aula criaremos as views associadas ao app `usuarios`.
+
+# URLs e Views
+Criação das views `login` e `cadastro` no arquivo `usuarios/urls.py`:
+
+```python
+from django.shortcuts import render
+
+def login(request):
+    return render(request, 'usuarios/login.html')
+
+def cadastro(request):
+    return render(request, 'usuarios/cadastro.html')
+```
+> Os arquivos HTML foram criados dentro da pasta de templates, localizados na raiz do projeto, conforme arquivo `settings.py`:
+> ```python
+> # Resto do código
+> TEMPLATES = [
+>     {
+>        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+>        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+>        # Resto do código
+>     }
+> ]
+> ```
+> Assim, o caminho completo dos arquivos HTML são `/templates/usuarios/login.html` e `/templates/usuarios/cadastro.html`. Cada arquivo contém uma tag `h1` com seu título.
+
+Atualização das rotas no arquivo `usuarios/urls.py`:
+```python
+from django.urls import path
+
+from usuarios.views import login, cadastro
+
+urlpatterns = [
+    path('login', login, name='login'),
+    path('cadastro', cadastro, name='cadastro'),
+]
+```
