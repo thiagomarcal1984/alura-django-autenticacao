@@ -89,3 +89,76 @@ urlpatterns = [
     path('cadastro', cadastro, name='cadastro'),
 ]
 ```
+# Templates
+Os arquivos HTML `/templates/usuarios/login.html` e `/templates/usuarios/cadastro.html` foram copiados a partir dos exemplos da aula.
+
+O foco será no arquivo `templates\galeria\partials\_menu.html`:
+```HTML
+<nav class="menu-lateral__navegacao">
+    <a href="{% url 'index' %}"><img src="{% static '/assets/ícones/1x/Home - ativo.png' %}"> Home</a>
+    <a href="{% url 'login' %}"><img src="{% static '/assets/ícones/1x/Mais vistas - inativo.png' %}">Login</a>
+    <a href="{% url 'cadastro'%}"><img src="{% static '/assets/ícones/1x/Novas - inativo.png' %}">Cadastrar</a>
+    <a href="#"><img src="{% static '/assets/ícones/1x/Surpreenda-me - inativo.png' %}"> Surpreenda-me</a>
+</nav>
+```
+Essa é a configuração proposta pela aula, presumindo que o arquivo `usuarios/urls.py` foi importado pelo arquivo `setup/urls.py` sem algum prefixo (com prefixo vazio):
+```python
+# Arquivo setup/urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('galeria.urls')),
+    path('', include('usuarios.urls')), # Aqui o prefixo está vazio
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+
+## E se o prefixo não estiver vazio?
+Nesse caso, precisamos incluir a variável `app_name` no arquivo `usuarios/urls.py`. Essa variável vai representar o namespace que será usado como prefixo no arquivo `setup/urls.py`:
+```python
+# Arquivo usuarios/urls.py
+from django.urls import path
+
+from usuarios.views import login, cadastro
+
+app_name = 'usuarios' # Variável que representa o namespace.
+urlpatterns = [
+    path('login', login, name='login'),
+    path('cadastro', cadastro, name='cadastro'),
+]
+```
+```python
+# Arquivo setup/urls.py
+from django.contrib import admin
+from django.urls import path, include
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('', include('galeria.urls')),
+    # Note que o prefixo não é vazio: ele é o mesmo que a variável app_name no arquivo usuarios/urls.py.
+    path('usuarios/', include('usuarios.urls')), 
+    # path('', include('usuarios.urls')),
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
+Finalmente, o namespace é referenciado pela função `url` no template do Django e separado do nome da rota por dois pontos. Veja isso no arquivo `templates\galeria\partials\_menu.html`:
+
+```HTML
+<nav class="menu-lateral__navegacao">
+    <a href="{% url 'index' %}"><img src="{% static '/assets/ícones/1x/Home - ativo.png' %}"> Home</a>
+    <a href="{% url 'usuarios:login' %}"><img src="{% static '/assets/ícones/1x/Mais vistas - inativo.png' %}">Login</a>
+    <a href="{% url 'usuarios:cadastro'%}"><img src="{% static '/assets/ícones/1x/Novas - inativo.png' %}">Cadastrar</a>
+    <a href="#"><img src="{% static '/assets/ícones/1x/Surpreenda-me - inativo.png' %}"> Surpreenda-me</a>
+</nav>
+```
+> Note que as rotas para as views `login` e `cadastro` que pertencem o aplicativo `usuarios` seguem o padrão `namespace:nome_da_view`. Ex.: 
+> ```HTML
+> <a href="{% url 'usuarios:login'%}" ...>Login</a>
+> <a href="{% url 'usuarios:cadastro'%}" ...>Cadastro</a>
+> ```
