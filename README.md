@@ -354,3 +354,33 @@ Arquivo `templates\usuarios\cadastro.html`:
     </div>
 </form>
 ```
+# Usuários do Django
+Os formulários no HTML não tiveram uma ação definida e o método padrão usado neles é o `GET`. Modificamos os formulários para conter a ação correta e o método HTTP correto: 
+```html
+<!-- login.html -->
+<form action="{% url 'usuarios:login' %}" method="post">
+<!-- cadastro.html -->
+<form action="{% url 'usuarios:cadastro' %}" method="post">
+```
+
+Vamos modificar também o comportamento interno da view `usuarios.view.cadastro` no arquivo `usuarios.views.py`:
+
+```python
+from django.shortcuts import render, redirect
+
+from usuarios.forms import LoginForm, CadastroForm
+
+# Resto do código
+def cadastro(request):
+    form = CadastroForm
+
+    if request.method == 'POST':
+        form = CadastroForm(request.POST)
+        if form['senha_1'].value() != form['senha_2'].value():
+            return redirect('usuarios:cadastro')
+        
+    return render(request, 'usuarios/cadastro.html', { 'form' : form})
+```
+> Note que o que está sendo comparado são os valores dos campos `senha_1` e `senha_2` do formulário.
+> 1. O formulário se comporta como um dicionário, cuja chave é o nome do campo que estamos procurando.
+> 2. O valor do campo na verdade é um método, não é um valor (note em `form['nome_campo'].value()`).

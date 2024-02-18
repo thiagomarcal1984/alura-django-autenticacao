@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from usuarios.forms import LoginForm, CadastroForm
 
@@ -8,4 +8,10 @@ def login(request):
 
 def cadastro(request):
     form = CadastroForm
+
+    if request.method == 'POST':
+        form = CadastroForm(request.POST)
+        if form['senha_1'].value() != form['senha_2'].value():
+            return redirect('usuarios:cadastro')
+        
     return render(request, 'usuarios/cadastro.html', { 'form' : form})
