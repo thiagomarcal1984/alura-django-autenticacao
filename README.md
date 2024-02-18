@@ -162,3 +162,59 @@ Finalmente, o namespace é referenciado pela função `url` no template do Djang
 > <a href="{% url 'usuarios:login'%}" ...>Login</a>
 > <a href="{% url 'usuarios:cadastro'%}" ...>Cadastro</a>
 > ```
+
+# Criando formulários
+Vamos substituir o formulário em HTML puro pelo formulário gerado pelo template do Django.
+
+Para isso, precisamos primeiro criar a classe do formulário no novo arquivo `usuarios/forms.py`:
+```python
+from django import forms
+
+class LoginForm(forms.Form):
+    nome_login = forms.CharField(
+        label='Nome de Login',
+        required=True,
+        max_length=100,
+    )
+    senha = forms.CharField(
+        label='Senha',
+        required=True,
+        max_length=70,
+        widget=forms.PasswordInput(),
+    )
+```
+> Note que o campo `senha` tem um parâmetro a mais, o `widget`. Nele podemos instanciar um objeto que representará o controle que será renderizado com o campo.
+
+Criado o formulário vamos instanciá-lo na view `login` no arquivo `usuarios/views.py`:
+```python
+# Resto do código
+from usuarios.forms import LoginForm
+
+def login(request):
+    form = LoginForm()
+    return render(request, 'usuarios/login.html', { 'form' : form })
+# Resto do código
+```
+
+E por último, substituímos os elementos do formulário em HTML pelos elementos de template do Django:
+```HTML
+<!-- Resto do código -->
+<form action="" method="">
+    {% csrf_token %}
+    <div class="row">
+        {% for field in form.visible_fields %}
+            <div>
+                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+    </div>
+</form>
+<!-- Resto do código -->
+```
+> Pontos importantes: 
+> 1. O campo `{% csrf_token %}`, para impedir ataques de Cross Site Request Forgery;
+> 2. Dentro do formulário, o objeto que será iterado para gerar os campos é o `visible_fields`;
+> 3. Para personalizarmos a tag label corretamente, definimos no atributo `for` o campo de template `{{ field.id_for_label }}`;
+> 4. Para inserir o texto do rótulo, basta usarmos o campo de template `{{ field.label }}`;
+> 5. Para inserir o campo do formulário, basta usarmos o campo de template `{{ field }}`.
