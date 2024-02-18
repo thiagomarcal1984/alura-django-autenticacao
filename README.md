@@ -218,3 +218,55 @@ E por último, substituímos os elementos do formulário em HTML pelos elementos
 > 3. Para personalizarmos a tag label corretamente, definimos no atributo `for` o campo de template `{{ field.id_for_label }}`;
 > 4. Para inserir o texto do rótulo, basta usarmos o campo de template `{{ field.label }}`;
 > 5. Para inserir o campo do formulário, basta usarmos o campo de template `{{ field }}`.
+
+# Estilizando formulário
+Para formatar os estilos dos campos de formulário, é necessário acrescentar um dicionário no parâmetro `attrs` do widget do campo. Veja o exemplo no arquivo `usuarios/forms.py`:
+
+```python
+from django import forms
+
+class LoginForm(forms.Form):
+    nome_login = forms.CharField(
+        label='Nome de Login',
+        required=True,
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Ex.: João Silva',
+            }
+        )
+    )
+    senha = forms.CharField(
+        label='Senha',
+        required=True,
+        max_length=70,
+        widget=forms.PasswordInput(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Digite sua senha',
+            }
+        ),
+    )
+```
+> Note que o dicionário `attrs` recebe os atributos HTML que queremos acrescentar aos widgets (`TextInput` e `PasswordInput`). No caso, colocamos a classe `form-control` do Bootstrap usando o atributo `class` e um placeholder usando o atributlo `placeholder`.
+
+Já a formatação dos rótulos e do botão de login são bem simples: basta aplicar os estilos do Bootstrap (conforme folha de estilo compartilhada pelas páginas).
+
+Arquivo `templates\usuarios\login.html`:
+```HTML
+<form action="" method="">
+    {% csrf_token %}
+    <div class="row">
+        {% for field in form.visible_fields %}
+            <div class="col-12 col-lg-12" style="margin-bottom: 10px;">
+                <label for="{{ field.id_for_label }}" style="color:#D9D9D9; margin-bottom: 5px;">{{ field.label }}</label>
+                {{ field }}
+            </div>
+        {% endfor %}
+    </div>
+    <div>
+        <button class="btn btn-success col-12" style="padding: top 5px;" type="submit">Logar</button>
+    </div>
+</form>
+```
