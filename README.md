@@ -471,3 +471,35 @@ Nos templates, inserimos um loop sobre o objeto `messages` para exibir todas as 
     </div>
 {% endfor %}
 ```
+# Logout
+A lógica de logout no arquivo `usuarios/views.py` fica assim:
+
+```python
+from django.contrib import auth, messages
+# Resto do código
+
+def logout(request):
+    messages.success(request, 'Logout efetuado com sucesso.')
+    auth.logout(request)
+    return redirect('usuarios:login')
+```
+> Note que existe o método `django.contrib.auth.logout` facilita a lógica para fazer logout do sistema.
+
+A view de `logout` também precisa ser roteada, conforme atualização no arquivo `usuarios/urls.py`:
+```python
+from django.urls import path
+
+from usuarios.views import login, cadastro, logout
+
+app_name = 'usuarios'
+urlpatterns = [
+    path('login', login, name='login'),
+    path('logout', logout, name='logout'),
+    path('cadastro', cadastro, name='cadastro'),
+]
+```
+
+Depois, podemos inserir nos templates o link para a rota de logout:
+```HTML
+<a href="{% url 'usuarios:logout' %}">Logout</a>
+```
