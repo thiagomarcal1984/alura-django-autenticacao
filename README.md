@@ -384,3 +384,35 @@ def cadastro(request):
 > Note que o que está sendo comparado são os valores dos campos `senha_1` e `senha_2` do formulário.
 > 1. O formulário se comporta como um dicionário, cuja chave é o nome do campo que estamos procurando.
 > 2. O valor do campo na verdade é um método, não é um valor (note em `form['nome_campo'].value()`).
+
+# Lógica de cadastro
+```python
+def cadastro(request):
+    form = CadastroForm
+
+    if request.method == 'POST':
+        form = CadastroForm(request.POST)
+        if form.is_valid():
+            if form['senha_1'].value() != form['senha_2'].value():
+                return redirect('usuarios:cadastro')
+            nome = form['nome_cadastro'].value()
+            email = form['email'].value()
+            senha = form['senha_1'].value()
+
+            # Usuário existente no banco não pode ser recadastrado.
+            if User.objects.filter(username=nome).exists():
+                return redirect('usuarios:cadastro')
+            
+            # Criação do usuário
+            usuario = User.objects.create_user(
+                username=nome,
+                email=email,
+                password=senha,
+            )
+            # Persistência dos dados do novo usuário.
+            usuario.save()
+            return redirect('usuarios:login')
+        
+    return render(request, 'usuarios/cadastro.html', { 'form' : form})
+```
+> O sucesso no cadastro é indicado pelo redirecionamento para a tela de login; qualquer falha redireciona o usuário para a tela de cadastro novamente.
