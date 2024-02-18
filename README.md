@@ -454,3 +454,20 @@ def login(request):
 >     password=senha
 > )
 > ```
+
+# Alertas e mensagens
+O pacote `django.contrib.messages` contém métodos que facilitam a inserção de flash messages no Django. Dentro das views, usamos as funções `messages.error` ou `messages.success`, as quais sempre recebem a requisição como primeiro parâmetro e a mensagem como segundo parâmetro: 
+```python
+messages.success(request, f'{nome} logado com sucesso.')
+messages.error(request, 'Erro ao efetuar login.')
+```
+
+Nos templates, inserimos um loop sobre o objeto `messages` para exibir todas as flash messages, cada uma em uma div.
+```HTML
+{% for message in messages %}
+    <div class="alert alert-primary">
+        <!-- Mensagens com fundo azul -->
+        <p>{{ message }}</p>
+    </div>
+{% endfor %}
+```

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.models import User
 
-from django.contrib import auth
+from django.contrib import auth, messages
 
 from usuarios.forms import LoginForm, CadastroForm
 
@@ -20,8 +20,10 @@ def login(request):
             )
             if usuario is not None:
                 auth.login(request, usuario)
+                messages.success(request, f'{nome} logado com sucesso.')
                 return redirect('index')
             else:
+                messages.error(request, 'Erro ao efetuar login.')
                 return redirect('usuarios:login')
     return render(request, 'usuarios/login.html', { 'form' : form })
 
@@ -32,6 +34,7 @@ def cadastro(request):
         form = CadastroForm(request.POST)
         if form.is_valid():
             if form['senha_1'].value() != form['senha_2'].value():
+                messages.error(request, 'Senhas não são iguais.')
                 return redirect('usuarios:cadastro')
             nome = form['nome_cadastro'].value()
             email = form['email'].value()
@@ -39,6 +42,7 @@ def cadastro(request):
 
             # Usuário existente no banco não pode ser recadastrado.
             if User.objects.filter(username=nome).exists():
+                messages.error(request, 'Usuário já existente.')
                 return redirect('usuarios:cadastro')
             
             # Criação do usuário
@@ -49,6 +53,7 @@ def cadastro(request):
             )
             # Persistência dos dados do novo usuário.
             usuario.save()
+            messages.success(request, 'Cadastro efetuado com sucesso.')
             return redirect('usuarios:login')
         
     return render(request, 'usuarios/cadastro.html', { 'form' : form})
