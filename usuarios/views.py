@@ -1,10 +1,11 @@
 from django.shortcuts import render
 
-from usuarios.forms import LoginForm
+from usuarios.forms import LoginForm, CadastroForm
 
 def login(request):
     form = LoginForm()
     return render(request, 'usuarios/login.html', { 'form' : form })
 
 def cadastro(request):
-    return render(request, 'usuarios/cadastro.html')
+    form = CadastroForm
+    return render(request, 'usuarios/cadastro.html', { 'form' : form})

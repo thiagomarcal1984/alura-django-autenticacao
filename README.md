@@ -270,3 +270,87 @@ Arquivo `templates\usuarios\login.html`:
     </div>
 </form>
 ```
+# Formulários de cadastro
+Os passos para a atualização da tela de cadastro são os mesmos da tela de login: 
+
+1. criar o formulário em `usuarios/forms.py` e especificar os atributos HTML de cada campo/widget; 
+2. atualizar a view em `usuarios/views.py`, inserindo o formulário; e
+3. atualizar o código HTML com os códigos de template Django.
+
+Arquivo `usuarios/forms.py`:
+```python
+# Resto do código 
+class CadastroForm(forms.Form):
+    nome_cadastro = forms.CharField(
+        label='Nome de Cadastro',
+        required=True,
+        max_length=100,
+        widget=forms.TextInput(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Ex.: João Silva'
+            }
+        )
+    )
+    email = forms.EmailField(
+        label='Email',
+        required=True,
+        max_length=100,
+        widget=forms.EmailInput(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Ex.: joaosilva@xpto.com'
+            }
+        )
+    )
+    senha_1 = forms.CharField(
+        label='Senha',
+        required=True,
+        max_length=100,
+        widget=forms.PasswordInput(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Digite sua senha'
+            }
+        )
+    )
+    senha_2 = forms.CharField(
+        label='Confirme sua senha',
+        required=True,
+        max_length=100,
+        widget=forms.PasswordInput(
+            attrs={
+                'class' : 'form-control',
+                'placeholder' : 'Digite sua senha novamente'
+            }
+        )
+    )
+```
+> Note que o campo de e-mail usa campo de formulário e widget diferentes: `EmailField` é o campo, e `EmailInput` é o widget.
+
+Arquivo `usuarios/views.py`:
+```python
+from usuarios.forms import LoginForm, CadastroForm
+# Resto do código 
+def cadastro(request):
+    form = CadastroForm
+    return render(request, 'usuarios/cadastro.html', { 'form' : form})
+```
+
+Arquivo `templates\usuarios\cadastro.html`:
+```HTML
+<form action="" method="">
+    {% csrf_token %}
+    <div class="row">
+        {% for field in form.visible_fields %}
+            <div class="col-12 col-lg-12" style="margin-bottom: 10px;">
+                <label for="{{ field.id_for_label}}" style="color:#D9D9D9; margin-bottom: 5px;"><b>{{ field.label }}</b></label>
+                {{ field }}
+            </div>
+        {% endfor %}
+        <div class="col-12 text-center">
+            <button class="btn btn-success col-12" style="padding: top 5px;" type="submit">Cadastrar</button>
+        </div>
+    </div>
+</form>
+```
