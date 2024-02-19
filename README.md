@@ -586,3 +586,38 @@ class CadastroForm(forms.Form):
 Destaques:
 1. O nome do método deve começar com `clean_` e depois ser serguido do nome do campo de modelo que será validado.
 2. Veja o código `raise forms.ValidationError('Mensagem de erro')`. Por enquanto, a mensagem de erro não aparece na tela do navegador, mas isso será corrigido.
+
+# Mensagens de erro
+Vamos remover a validação de igualdade de senha que estava em `usuarios/views.py` e movê-la para `usuarios/forms.py`:
+```python
+class CadastroForm(forms.Form):
+    # Resto do código
+    senha_2 = forms.CharField(
+        # Resto do código
+    )
+    # Resto do código
+    def clean_senha_2(self):
+        senha_1 = self.cleaned_data.get('senha_1')
+        senha_2 = self.cleaned_data.get('senha_2')
+        if senha_1 and senha_2:
+            if senha_1 != senha_2:
+                raise forms.ValidationError('Senhas não são iguais.')
+        return senha_2
+```
+
+E no template de cadastro, vamos exibir as mensagens de erro usando o campo `field.errors` de cada elemento do formulário:
+```HTML
+{% for field in form.visible_fields %}
+    <div class="col-12 col-lg-12">
+        <label for="{{ field.id_for_label}}">
+            <b>{{ field.label }}</b>
+        </label>
+        {{ field }}
+    </div>
+    {% for error in field.errors %}
+        <div class="alert alert-danger">
+            {{ error }}
+        </div>
+    {% endfor %}
+{% endfor %}
+```
