@@ -382,3 +382,9 @@ table {
     border: 2px solid #7B78E5;
     cursor: pointer;
 }
+
+.alert-primary {
+    color: #084298;
+    background-color: #cfe2ff;
+    border-color: #b6d4fe;
+}

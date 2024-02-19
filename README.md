@@ -503,3 +503,15 @@ Depois, podemos inserir nos templates o link para a rota de logout:
 ```HTML
 <a href="{% url 'usuarios:logout' %}">Logout</a>
 ```
+# Refatoração e validação
+A validação consiste apenas em verificar se o usuário está logado. Caso ele não esteja, ele é redirecionado para a tela de login:
+
+```python
+def minha_view(request):
+    if not request.user.is_authenticated:
+        messages.error(request, 'Usuário não logado.')
+        return redirect('usuarios:login')
+    # Resto do código
+```
+
+A refatoração consiste apenas em modificar o CSS, de maneira que as classes do Bootstrap não se sobreponham aos estilos aplicados às fotos nas views de `galeria.views.busca` e `galeria.views.index`. Para isso, foi necessário copiar os estilos desejados do Bootstrap para o arquivo `setup/static/styles/style.css`. Depois usamos o comando `python manage.py collectstatic` para que a folha de estilo seja copiada para o diretório `static/styles/style.css`.
