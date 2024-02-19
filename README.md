@@ -515,3 +515,48 @@ def minha_view(request):
 ```
 
 A refatoração consiste apenas em modificar o CSS, de maneira que as classes do Bootstrap não se sobreponham aos estilos aplicados às fotos nas views de `galeria.views.busca` e `galeria.views.index`. Para isso, foi necessário copiar os estilos desejados do Bootstrap para o arquivo `setup/static/styles/style.css`. Depois usamos o comando `python manage.py collectstatic` para que a folha de estilo seja copiada para o diretório `static/styles/style.css`.
+
+# Associando tabelas
+Vamos associar as fotografias a um único usuário. Para isso, editaremos o modelo `galeria.models.Fotografia`:
+```python
+# Resto do código
+from django.contrib.auth.models import User
+
+class Fotografia(models.Model):
+    # Resto do código
+    usuario = models.ForeignKey(
+        to=User,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=False,
+        related_name='user',
+    )
+# Resto do código
+```
+
+Saída dos comandos `makemigrations` e `migrate`:
+```
+PS D:\alura\django-autenticacao> python manage.py makemigrations
+Migrations for 'galeria':
+  galeria\migrations\0006_fotografia_usuario.py
+    - Add field usuario to fotografia
+PS D:\alura\django-autenticacao> python manage.py migrate   Operations to perform:
+  Apply all migrations: admin, auth, contenttypes, galeria, sessions
+Running migrations:
+  Applying galeria.0006_fotografia_usuario... OK
+PS D:\alura\django-autenticacao>
+```
+
+Finalmente, vamos acrescentar mais um filtro nas fotografias, por usuário. Para isso, editaremos o modelo de `galeria.admin.ListandoFotografias`:
+
+```python
+from django.contrib import admin
+
+from galeria.models import Fotografia
+
+class ListandoFotografias(admin.ModelAdmin):
+    list_filter = ("categoria", "usuario")
+    # Resto do código
+
+admin.site.register(Fotografia, ListandoFotografias)
+```
