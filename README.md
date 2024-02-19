@@ -560,3 +560,29 @@ class ListandoFotografias(admin.ModelAdmin):
 
 admin.site.register(Fotografia, ListandoFotografias)
 ```
+# Validação clean
+Vamos proibir o uso de espaço no campo de nome de usuário (arquivo `usuarios/forms.py`):
+```python
+from django import forms
+
+# Resto do código
+class CadastroForm(forms.Form):
+    nome_cadastro = forms.CharField(
+        # Resto do código
+    )
+    # Resto do código
+    def clean_nome_cadastro(self):
+        nome = self.cleaned_data.get('nome_cadastro')
+
+        if nome:
+            # Remove espaços do início e do fim da string.
+            nome = nome.strip()
+            if " " in nome:
+                raise forms.ValidationError("Não é possível inserir espaços dentro do campo usuário.")
+            else:
+                return nome
+```
+
+Destaques:
+1. O nome do método deve começar com `clean_` e depois ser serguido do nome do campo de modelo que será validado.
+2. Veja o código `raise forms.ValidationError('Mensagem de erro')`. Por enquanto, a mensagem de erro não aparece na tela do navegador, mas isso será corrigido.
