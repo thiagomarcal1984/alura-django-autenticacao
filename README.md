@@ -654,3 +654,8 @@ Criação da partial para os alertas:
 ```
 
 Para usar uma partial, usamos o comando `include` no template do Django: `{% include 'galeria/partials/_alertas.html' %}`.
+
+# Reorganizando diretórios
+Movemos a pasta `partials` de dentro do diretório `templates/galeria` para o diretório `templates`. Depois atualizamos o HTML das páginas que referenciam essas partials. Bem fácil.
+
+Nas aulas foi proposto remover as repetições presentes nos formulários de login e de cadastro. Isso é apenas um exercício para usar os recursos de template do Django para evitar repetições com extensão e inclusão de código.
