@@ -621,3 +621,36 @@ E no template de cadastro, vamos exibir as mensagens de erro usando o campo `fie
     {% endfor %}
 {% endfor %}
 ```
+# Partial para alertas
+Primeiro, precisamos mudar as configurações do Django para informar qual classe CSS/Bootstrap será usada para cada tipo de mensagem disparada pela view através dos comandos `django.contrib.messages.error` e  `django.contrib.messages.success`:
+```python
+# settings.py
+from django.contrib.messages import constants
+
+MESSAGE_TAGS = {
+    constants.ERROR: 'danger',
+    constants.SUCCESS: 'success',
+}
+# Na documentação do Django, o import das constants usa o alias 
+# messages. Segue a versão alternativa do código:
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+    messages.SUCCESS: 'success',
+}
+```
+
+Criação da partial para os alertas:
+
+```HTML
+{% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">
+        {{ message }}
+    </div>
+    {% endfor %}
+{% endif %}
+```
+
+Para usar uma partial, usamos o comando `include` no template do Django: `{% include 'galeria/partials/_alertas.html' %}`.
